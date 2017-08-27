@@ -1,5 +1,9 @@
 var http = require('http');
 var fs = require('fs');
+var express = require('express');
+var app = express();
+var router = express.Router()
+
 
 function UploadFile(request, response){
   response.writeHead(200);
@@ -33,8 +37,18 @@ function DownloadFile(request, response){
 
 }
 
-http.createServer(DownloadFile).listen(8080, function(){
-    console.log("Server started");
+router.use('/upload',UploadFile)
+router.get('/download', DownloadFile);
+router.get('/', function(req, res){
+  console.log("Request from : " + req.socket.remoteAddress);
+  res.send("Hello this is fwfly upload download server")
 });
+
+app.use('/', router);
+
+app.listen(3000, function(){
+  console.log('Server is listening port 3000')
+});
+
 
 
