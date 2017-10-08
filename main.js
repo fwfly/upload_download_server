@@ -4,17 +4,22 @@ var express = require('express');
 var app = express();
 var router = express.Router()
 
-
 function UploadFile(request, response){
   response.writeHead(200);
 
   var destFile = fs.createWriteStream("dest.md");
-  request.pipe(destFile);
+
+  // You can use pipe to receive data, but it will write all data include http header.
+  //request.pipe(destFile);
 
   var fileSize = request.headers['content-length'];
   var uploadedBytes = 0;
 
   request.on('data', function(d){
+
+    // To do parse http header and get file name
+    destFile.write(d);
+
     uploadedBytes += d.length;
     var p = (uploadedBytes/fileSize) * 100
     response.write("Uploading " + parseInt(p) + "%\n");
